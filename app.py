@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash
 from datetime import timedelta
-import sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
@@ -9,9 +9,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.permanent_session_lifetime = timedelta(minutes = 5)
 
-db = sqlalchemy(app)
 
-class users(db.Model):
+db = SQLAlchemy(app)
+
+class Users(db.Model):
     _id = db.Column("id", db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     email = db.Column(db.String(100))
@@ -24,12 +25,26 @@ class users(db.Model):
 def home():
     return render_template("index.html")
 
+@app.route('/view')
+def view():
+    return render_template("view.html", values = Users.query.all())
+
 @app.route('/login', methods = ['POST','GET'])
 def login():
     if request.method == "POST":
         session.permanent = True
         user = request.form["name"]  #<input type="text" name="namer"
         session["user"] = user
+
+        found_user = Users.query.filter_by(name=user).first()
+
+        if found_user:
+            session["email"] = found_user.email
+        else:
+            usr = Users(user, "")
+            db.session.add(usr) #adds user object to db
+            db.session.commit()
+
         flash("Login Successful")
         return redirect(url_for("user"))
     else:
@@ -47,6 +62,9 @@ def user():
         if request.method == 'POST':
             email = request.form["email"]
             session["email"] = email
+            found_user = Users.query.filter_by(name = user).first()
+            found_user.email = email
+            db.session.commit()
             flash("Email was saved")
         else:
             if "email" in session:
@@ -67,5 +85,6 @@ def logout():
 
 
 if __name__ == "__main__":
-    db.create_all()
-    app.run(debug=True)
+    with app.app_context():
+        db.create_all()
+        app.run(debug=True)
