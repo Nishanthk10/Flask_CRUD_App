@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %} Order History Page {% endblock %}
+{% block body %}
+<div class="jumbotron p-3">
+    <div class="well text-center">
+        <h1>Order History Page</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row" style="background:lightgrey;">
+        <div class="col md-12">  
+
+            <div class="jumbotron p-3">
+                <table class="table table-hover table-dark" style="font-size: 14px;">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Date</th>
+                        <th>Shipped Date</th>
+                        <th>Required Date</th>
+                    </tr>
+                    {% for customer, order in orderhistory %}
+                    <tr>
+                        <td>{{order.orderid}}</td>
+                        <td>{{order.orderdate}}</td>
+                        <td>{{order.shippeddate}}</td>
+                        <td>{{order.requireddate}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

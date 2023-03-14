@@ -13,17 +13,17 @@ db = SQLAlchemy(app)
 with app.app_context():
     Base = automap_base()
     Base.prepare(db.engine, reflect=True)
-    Regions = Base.classes.regions
     Customers = Base.classes.customers
     Products = Base.classes.products
     Orders = Base.classes.orders
 
 
+
 @app.route('/')
 def index():
-    all_data = db.session.query(Regions).all()
-    for r in all_data:
-        print(format(r.regiondescription))
+    all_data = db.session.query(Customers, Orders).select_from(Customers).join(Orders).filter(Customers.customerid == 'BLONP').all()
+    for customer, order in all_data:
+        print(order.orderid, order.orderdate, order.shippeddate, order.requireddate)
 
     return ''
     # return render_template("index.html", employees = all_data)
@@ -82,6 +82,14 @@ def deletecustomer(customerid):
     db.session.commit()
     flash("Employee Deleted Successfully")
     return redirect(url_for('customers'))
+
+@app.route('/customers/orderhistory/<customerid>/', methods=['POST','GET'])
+def orderhistory(customerid):
+    all_data = db.session.query(Customers, Orders).select_from(Customers).join(Orders).filter(Customers.customerid == customerid).all()
+    for customer, order in all_data:
+        print(order.orderid, order.orderdate, order.shippeddate, order.requireddate)
+
+    return render_template("orderhistory.html", orderhistory = all_data)
 
 #Products
 
@@ -200,6 +208,8 @@ def deleteorder(orderid):
     db.session.commit()
     flash("Order Deleted Successfully")
     return redirect(url_for('orders'))
+
+
 
 if __name__ == "__main__":
     with app.app_context():
