@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block title %} Customer Page {% endblock %}
+{% block body %}
+<div class="jumbotron p-3">
+    <div class="well text-center">
+        <h1>Customer Page</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row" style="background:lightgrey;">
+        <div class="col md-12">  
+
+            <div class="jumbotron p-3">
+                <h2>Manage <b>Customers</b> <button type="button" class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#mymodal">Add New Customer</button></h2>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-success alert-dismissable" role="alert">
+                    <button type="button" style="border: #fff; background: #d1e7dd;" class="float-end" data-bs-dismiss="alert" aria-label="close">x</button>
+                    {{message}}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+
+                <table class="table table-hover table-dark" style="font-size: 14px;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Contact Name</th>
+                        <th>Contact Title</th>
+                        <th>Address</th>
+                        <th>City</th>
+                        <th>Region</th>
+                        <th>Postal Code</th>
+                        <th>Country</th>
+                        <th>Phone</th>
+                        <th>Fax</th>
+                        <th style="padding-right: 91px;">Actions</th>
+                    </tr>
+                    {% for row in customers %}
+                    <tr style="font-size: 12px;">
+                        <td>{{row.customerid}}</td>
+                        <td>{{row.companyname}}</td>
+                        <td>{{row.contactname}}</td>
+                        <td>{{row.contacttitle}}</td>
+                        <td>{{row.address}}</td>
+                        <td>{{row.city}}</td>
+                        <td>{{row.region}}</td>
+                        <td>{{row.postalcode}}</td>
+                        <td>{{row.country}}</td>
+                        <td>{{row.phone}}</td>
+                        <td>{{row.fax}}</td>
+                        <td>
+                            <a href="/customers/update/{{row.customerid}}" class="btn btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modaledit{{row.customerid}}">Edit</a>
+                            <a href="/customers/delete/{{row.customerid}}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete?')">Delete</a>
+                        </td> 
+                    </tr>
+                    <!-- Modal Edit Customer-->
+            <div id="modaledit{{row.customerid}}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Update Information</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{url_for('updatecustomer')}}" method="POST">
+                                <div class="form-group">
+                                    <label>Company Name:</label>
+                                    <input type="hidden" name="customerid" value="{{row.customerid}}">  
+                                    <input type="text" class="form-control" name="companyname" value="{{row.companyname}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Contact Name:</label> 
+                                    <input type="text" class="form-control" name="contactname" value="{{row.contactname}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Contact Title:</label> 
+                                    <input type="text" class="form-control" name="contacttitle" value="{{row.contacttitle}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Address:</label> 
+                                    <input type="text" class="form-control" name="address" value="{{row.address}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>City:</label> 
+                                    <input type="text" class="form-control" name="city" value="{{row.city}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Region:</label> 
+                                    <input type="text" class="form-control" name="region" value="{{row.region}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Postal Code:</label> 
+                                    <input type="text" class="form-control" name="postalcode" value="{{row.postalcode}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Country:</label> 
+                                    <input type="text" class="form-control" name="country" value="{{row.country}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone:</label> 
+                                    <input type="text" class="form-control" name="phone" value="{{row.phone}}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Fax:</label> 
+                                    <input type="text" class="form-control" name="fax" value="{{row.fax}}">&nbsp;
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary" type="submit">Update</button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                {% endfor %}
+                </table>
+            </div>
+            <!-- Modal Add Customer-->
+            <div id="mymodal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Add Customer</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{url_for('insertcustomer')}}" method="POST">
+                                <div class="form-group">
+                                    <label>Customer ID:</label>
+                                    <input type="text" class="form-control" name="customerid" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Company Name:</label>
+                                    <input type="text" class="form-control" name="companyname" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Contact Name:</label> 
+                                    <input type="text" class="form-control" name="contactname" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Contact Title:</label> 
+                                    <input type="text" class="form-control" name="contacttitle" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Address:</label> 
+                                    <input type="text" class="form-control" name="address" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>City:</label> 
+                                    <input type="text" class="form-control" name="city" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Region:</label> 
+                                    <input type="text" class="form-control" name="region" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Postal Code:</label> 
+                                    <input type="text" class="form-control" name="postalcode" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Country:</label> 
+                                    <input type="text" class="form-control" name="country" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone:</label> 
+                                    <input type="text" class="form-control" name="phone" required="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Fax:</label> 
+                                    <input type="text" class="form-control" name="fax" required="1">&nbsp;
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary" type="submit">Add Customer</button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
