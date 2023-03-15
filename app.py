@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.automap import automap_base
-
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 app.secret_key = "Secret Key"
@@ -16,6 +16,7 @@ with app.app_context():
     Customers = Base.classes.customers
     Products = Base.classes.products
     Orders = Base.classes.orders
+
 
 
 
@@ -37,42 +38,50 @@ def customers():
 @app.route('/customers/insert', methods = ['POST'])
 def insertcustomer():
     if request.method == 'POST':
-        customerid = request.form['customerid']
-        companyname = request.form['companyname']
-        contactname = request.form['contactname']
-        contacttitle = request.form['contacttitle']
-        address = request.form['address']
-        city = request.form['city']
-        region = request.form['region']
-        postalcode = request.form['postalcode']
-        country = request.form['country']
-        phone = request.form['phone']
-        fax = request.form['fax']
+        try:
+            customerid = request.form['customerid']
+            companyname = request.form['companyname']
+            contactname = request.form['contactname']
+            contacttitle = request.form['contacttitle']
+            address = request.form['address']
+            city = request.form['city']
+            region = request.form['region']
+            postalcode = request.form['postalcode']
+            country = request.form['country']
+            phone = request.form['phone']
+            fax = request.form['fax']
 
-        my_data = Customers(customerid=customerid, companyname=companyname, contactname=contactname, contacttitle=contacttitle, address=address, city=city, region=region, postalcode=postalcode, country=country, phone=phone, fax=fax)
-        db.session.add(my_data)
-        db.session.commit()
+            my_data = Customers(customerid=customerid, companyname=companyname, contactname=contactname, contacttitle=contacttitle, address=address, city=city, region=region, postalcode=postalcode, country=country, phone=phone, fax=fax)
+            db.session.add(my_data)
+            db.session.commit()
 
-        flash("Customer Inserted Successfully")
+            flash("Customer Inserted Successfully")
+        except IntegrityError:
+            db.session.rollback()
+            flash("Customer Already Exists")
         return redirect(url_for('customers'))
 
 @app.route('/customers/update', methods = ['GET', 'POST'])
 def updatecustomer():
     if request.method == 'POST':
-        my_data = db.session.query(Customers).get(request.form.get('customerid'))
-        my_data.companyname = request.form['companyname']
-        my_data.contactname = request.form['contactname']
-        my_data.contacttitle = request.form['contacttitle']
-        my_data.address = request.form['address']
-        my_data.city = request.form['city']
-        my_data.region = request.form['region']
-        my_data.postalcode = request.form['postalcode']
-        my_data.country = request.form['country']
-        my_data.phone = request.form['phone']
-        my_data.fax = request.form['fax']
-        
-        db.session.commit()
-        flash("Customer Updated Successfully")
+        try:
+            my_data = db.session.query(Customers).get(request.form.get('customerid'))
+            my_data.companyname = request.form['companyname']
+            my_data.contactname = request.form['contactname']
+            my_data.contacttitle = request.form['contacttitle']
+            my_data.address = request.form['address']
+            my_data.city = request.form['city']
+            my_data.region = request.form['region']
+            my_data.postalcode = request.form['postalcode']
+            my_data.country = request.form['country']
+            my_data.phone = request.form['phone']
+            my_data.fax = request.form['fax']
+            
+            db.session.commit()
+            flash("Customer Updated Successfully")
+        except IntegrityError:
+            db.session.rollback()
+            flash("Customer Already Exists")
         return redirect(url_for('customers'))
     
 @app.route('/customers/delete/<customerid>/', methods = ['GET','POST'])
@@ -100,40 +109,48 @@ def products():
 @app.route('/products/insert', methods = ['POST'])
 def insertproduct():
     if request.method == 'POST':
-        productid = request.form['productid']
-        productname = request.form['productname']
-        supplierid = request.form['supplierid']
-        categoryid = request.form['categoryid']
-        quantityperunit = request.form['quantityperunit']
-        unitprice = request.form['unitprice']
-        unitsinstock = request.form['unitsinstock']
-        unitsonorder = request.form['unitsonorder']
-        reorderlevel = request.form['reorderlevel']
-        discontinued = request.form['discontinued']
+        try:
+            productid = request.form['productid']
+            productname = request.form['productname']
+            supplierid = request.form['supplierid']
+            categoryid = request.form['categoryid']
+            quantityperunit = request.form['quantityperunit']
+            unitprice = request.form['unitprice']
+            unitsinstock = request.form['unitsinstock']
+            unitsonorder = request.form['unitsonorder']
+            reorderlevel = request.form['reorderlevel']
+            discontinued = request.form['discontinued']
 
-        my_data = Products(productid=productid, productname=productname, supplierid=supplierid, categoryid=categoryid, quantityperunit=quantityperunit, unitprice=unitprice, unitsinstock=unitsinstock, unitsonorder=unitsonorder, reorderlevel=reorderlevel, discontinued=discontinued)
-        db.session.add(my_data)
-        db.session.commit()
+            my_data = Products(productid=productid, productname=productname, supplierid=supplierid, categoryid=categoryid, quantityperunit=quantityperunit, unitprice=unitprice, unitsinstock=unitsinstock, unitsonorder=unitsonorder, reorderlevel=reorderlevel, discontinued=discontinued)
+            db.session.add(my_data)
+            db.session.commit()
 
-        flash("Product Inserted Successfully")
+            flash("Product Inserted Successfully")
+        except IntegrityError:
+            db.session.rollback()
+            flash("Product Already Exists")
         return redirect(url_for('products'))
 
 @app.route('/products/update', methods = ['GET', 'POST'])
 def updateproduct():
     if request.method == 'POST':
-        my_data = db.session.query(Products).get(request.form.get('productid'))
-        my_data.productname = request.form['productname']
-        my_data.supplierid = request.form['supplierid']
-        my_data.categoryid = request.form['categoryid']
-        my_data.quantityperunit = request.form['quantityperunit']
-        my_data.unitprice = request.form['unitprice']
-        my_data.unitsinstock = request.form['unitsinstock']
-        my_data.unitsonorder = request.form['unitsonorder']
-        my_data.reorderlevel = request.form['reorderlevel']
-        my_data.discontinued = request.form['discontinued']
-        
-        db.session.commit()
-        flash("Product Updated Successfully")
+        try:
+            my_data = db.session.query(Products).get(request.form.get('productid'))
+            my_data.productname = request.form['productname']
+            my_data.supplierid = request.form['supplierid']
+            my_data.categoryid = request.form['categoryid']
+            my_data.quantityperunit = request.form['quantityperunit']
+            my_data.unitprice = request.form['unitprice']
+            my_data.unitsinstock = request.form['unitsinstock']
+            my_data.unitsonorder = request.form['unitsonorder']
+            my_data.reorderlevel = request.form['reorderlevel']
+            my_data.discontinued = request.form['discontinued']
+            
+            db.session.commit()
+            flash("Product Updated Successfully")
+        except IntegrityError:
+            db.session.rollback()
+            flash("Customer Already Exists")
         return redirect(url_for('products'))
     
 @app.route('/products/delete/<productid>/', methods = ['GET','POST'])
