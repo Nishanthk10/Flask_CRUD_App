@@ -38,7 +38,7 @@
                         <th>Country</th>
                         <th>Phone</th>
                         <th>Fax</th>
-                        <th style="padding-right: 91px;">Actions</th>
+                        <th style="padding-right: 10px;">Actions</th>
                     </tr>
                     {% for row in customers %}
                     <tr style="font-size: 12px;">
@@ -54,9 +54,9 @@
                         <td>{{row.phone}}</td>
                         <td>{{row.fax}}</td>
                         <td>
-                            <a href="/customers/update/{{row.customerid}}" class="btn btn-warning btn-xs" data-bs-toggle="modal" data-bs-target="#modaledit{{row.customerid}}">Edit</a>
-                            <a href="/customers/delete/{{row.customerid}}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure To Delete?')">Delete</a>
-                            <a href="/customers/orderhistory/{{row.customerid}}" class="btn btn-info btn-xs" >Show Order History</a>
+                            <a href="/customers/update/{{row.customerid}}" class="btn btn-warning btn-xs" style="font-size: 13px;padding: 5px 15px 5px 15px;" data-bs-toggle="modal" data-bs-target="#modaledit{{row.customerid}}">Edit</a>
+                            <a href="/customers/delete/{{row.customerid}}" class="btn btn-danger btn-xs" style="font-size: 13px;padding: 5px 15px 5px 13px;" onclick="return confirm('Are You Sure To Delete?')">Delete</a>
+                            <a href="/customers/orderhistory/{{row.customerid}}" class="btn btn-info btn-xs" style="font-size: 13px;padding: 5px 5px 5px 5px;margin-top: 4px;" >Show Order History</a>
                         </td> 
                     </tr>
                     <!-- Modal Edit Customer-->

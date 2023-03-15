@@ -86,10 +86,8 @@ def deletecustomer(customerid):
 @app.route('/customers/orderhistory/<customerid>/', methods=['POST','GET'])
 def orderhistory(customerid):
     all_data = db.session.query(Customers, Orders).select_from(Customers).join(Orders).filter(Customers.customerid == customerid).all()
-    for customer, order in all_data:
-        print(order.orderid, order.orderdate, order.shippeddate, order.requireddate)
 
-    return render_template("orderhistory.html", orderhistory = all_data)
+    return render_template("orderhistory.html", orderhistory = all_data, customerid = customerid)
 
 #Products
 
